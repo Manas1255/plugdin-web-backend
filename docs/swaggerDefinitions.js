@@ -83,6 +83,55 @@
  *           description: User password (minimum 6 characters)
  *           example: password123
  * 
+ *     LoginRequest:
+ *       type: object
+ *       required:
+ *         - email
+ *         - password
+ *       properties:
+ *         email:
+ *           type: string
+ *           format: email
+ *           description: User email address
+ *           example: john.doe@example.com
+ *         password:
+ *           type: string
+ *           format: password
+ *           description: User password
+ *           example: password123
+ * 
+ *     LoginResponse:
+ *       type: object
+ *       properties:
+ *         role:
+ *           type: string
+ *           enum: [client, vendor]
+ *           description: User role
+ *           example: client
+ *         firstName:
+ *           type: string
+ *           description: User first name
+ *           example: John
+ *         lastName:
+ *           type: string
+ *           description: User last name
+ *           example: Doe
+ *         email:
+ *           type: string
+ *           format: email
+ *           description: User email address
+ *           example: john.doe@example.com
+ *         profilePicture:
+ *           type: string
+ *           nullable: true
+ *           description: URL to user profile picture
+ *           example: null
+ *         bio:
+ *           type: string
+ *           nullable: true
+ *           description: User bio
+ *           example: null
+ * 
  *     Error:
  *       type: object
  *       properties:

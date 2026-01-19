@@ -13,6 +13,9 @@ router.get('/health', (req, res) => {
 // Authentication routes
 router.use('/api/auth', require('./auth'));
 
+// Profile routes
+router.use('/api/profile', require('./profile'));
+
 // Add your routes here
 // Example: router.use('/api/users', require('./users'));
 
