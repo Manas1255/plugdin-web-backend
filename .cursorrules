@@ -1,0 +1,78 @@
+# Architecture Rules for plugdin-web-backend
+
+## Controller Architecture
+
+### Separation of Concerns
+
+1. **Business Logic in Services**
+   - All business logic and complex operations in controllers MUST be extracted to service files in the `services/` folder
+   - Controllers should only handle HTTP request/response handling, validation, and orchestration
+   - Controllers should call service methods for any business logic operations
+   - Example: Data processing, calculations, business rule validations, external API calls, etc.
+
+2. **Database Operations in Repositories**
+   - All database-related operations (CRUD, queries, transactions) in controllers MUST be moved to repository files in the `repositories/` folder
+   - Controllers should NEVER directly interact with database models or perform database queries
+   - Controllers should call repository methods for all database operations
+   - Example: `find()`, `create()`, `update()`, `delete()`, `findOne()`, `aggregate()`, etc.
+
+### Response Formatting
+
+3. **Response Helper Usage**
+   - ALL responses from controllers MUST use the `responseHelper` utility from the `utils/` folder
+   - Never send raw responses using `res.json()`, `res.status().json()`, etc.
+   - Always format responses through the responseHelper to ensure consistent response structure across the application
+   - Import: `const responseHelper = require('../utils/responseHelper')` or `import responseHelper from '../utils/responseHelper'`
+
+### Controller Structure Example
+
+```javascript
+// ✅ GOOD: Controller follows architecture rules
+const service = require('../services/userService');
+const repository = require('../repositories/userRepository');
+const responseHelper = require('../utils/responseHelper');
+
+exports.getUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    // Database operation in repository
+    const user = await repository.findById(userId);
+    // Business logic in service
+    const processedUser = await service.processUserData(user);
+    // Response using responseHelper
+    return responseHelper.success(res, processedUser, 'User retrieved successfully');
+  } catch (error) {
+    return responseHelper.error(res, error.message, 500);
+  }
+};
+
+// ❌ BAD: Logic and DB operations in controller
+exports.getUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    // ❌ Direct DB operation
+    const user = await User.findById(userId);
+    // ❌ Business logic in controller
+    user.processedData = processData(user);
+    // ❌ Raw response
+    return res.status(200).json({ success: true, data: user });
+  } catch (error) {
+    return res.status(500).json({ success: false, error: error.message });
+  }
+};
+```
+
+## File Organization
+
+- **Controllers**: `controllers/` - Handle HTTP requests/responses only
+- **Services**: `services/` - Contain all business logic
+- **Repositories**: `repositories/` - Contain all database operations
+- **Utils**: `utils/` - Contains helper utilities like `responseHelper`
+
+## Code Review Checklist
+
+When reviewing or writing controller code, ensure:
+- [ ] No business logic in controllers (moved to services)
+- [ ] No direct database operations in controllers (moved to repositories)
+- [ ] All responses use `responseHelper` from `utils/`
+- [ ] Controllers are thin and only orchestrate service and repository calls
