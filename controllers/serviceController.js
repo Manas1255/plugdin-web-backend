@@ -2,6 +2,7 @@ const serviceService = require('../services/serviceService');
 const { sendResponse } = require('../utils/responseHelper');
 const { getErrorMessage } = require('../errors/errorHelper');
 const errorMessages = require('../errors/errorMessages');
+const { getPaginationParams } = require('../utils/paginationHelper');
 
 /**
  * Create a new service
@@ -61,13 +62,14 @@ const getVendorServices = async (req, res) => {
     try {
         const vendorId = req.user._id;
         const { status } = req.query;
+        const { page, limit } = getPaginationParams(req);
 
         const filters = {};
         if (status) {
             filters.status = status;
         }
 
-        const result = await serviceService.getVendorServices(vendorId, filters);
+        const result = await serviceService.getVendorServices(vendorId, filters, page, limit);
 
         if (!result.success) {
             return sendResponse(res, result.statusCode, null, {
@@ -143,19 +145,17 @@ const deleteService = async (req, res) => {
  */
 const searchServices = async (req, res) => {
     try {
-        const { category, listingType, minPrice, maxPrice, page = 1, limit = 10 } = req.query;
+        const { category, minPrice, maxPrice, startDate, endDate } = req.query;
+        const { page, limit } = getPaginationParams(req);
 
         const filters = {};
         if (category) filters.category = category;
-        if (listingType) filters.listingType = listingType;
+        if (minPrice) filters.minPrice = parseFloat(minPrice);
+        if (maxPrice) filters.maxPrice = parseFloat(maxPrice);
+        if (startDate) filters.startDate = startDate;
+        if (endDate) filters.endDate = endDate;
         
-        // Add price filtering logic here if needed
-        
-        const result = await serviceService.searchServices(
-            filters,
-            parseInt(page),
-            parseInt(limit)
-        );
+        const result = await serviceService.searchServices(filters, page, limit);
 
         if (!result.success) {
             return sendResponse(res, result.statusCode, null, {

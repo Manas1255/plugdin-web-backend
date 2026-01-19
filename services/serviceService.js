@@ -1,6 +1,7 @@
 const serviceRepository = require('../repositories/serviceRepository');
 const categoryRepository = require('../repositories/categoryRepository');
 const cityRepository = require('../repositories/cityRepository');
+const { calculatePagination } = require('../utils/paginationHelper');
 
 /**
  * Validate availability schedule
@@ -298,16 +299,20 @@ const getServiceById = async (serviceId) => {
 /**
  * Get vendor's services
  */
-const getVendorServices = async (vendorId, filters = {}) => {
+const getVendorServices = async (vendorId, filters = {}, page = 1, limit = 10) => {
     try {
-        const services = await serviceRepository.findByVendor(vendorId, filters);
+        const skip = (page - 1) * limit;
+        const services = await serviceRepository.findByVendorPaginated(vendorId, filters, limit, skip);
+        const total = await serviceRepository.countByVendor(vendorId, filters);
+        
+        const pagination = calculatePagination(total, page, limit);
 
         return {
             success: true,
             statusCode: 200,
             data: {
-                count: services.length,
-                services
+                services,
+                pagination
             }
         };
 
@@ -431,25 +436,79 @@ const deleteService = async (serviceId, vendorId) => {
 };
 
 /**
+ * Get days of week from date range
+ */
+const getDaysOfWeekFromDateRange = (startDate, endDate) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    
+    // Validate dates
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+        return null;
+    }
+    
+    if (start > end) {
+        return null;
+    }
+    
+    const daysOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const uniqueDays = new Set();
+    
+    // Iterate through all dates in the range
+    const currentDate = new Date(start);
+    while (currentDate <= end) {
+        const dayIndex = currentDate.getDay();
+        uniqueDays.add(daysOfWeek[dayIndex]);
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+    
+    return Array.from(uniqueDays);
+};
+
+/**
  * Search services
  */
 const searchServices = async (filters = {}, page = 1, limit = 10) => {
     try {
+        // Process date range if provided
+        if (filters.startDate || filters.endDate) {
+            // Both dates are required for date range filtering
+            if (!filters.startDate || !filters.endDate) {
+                return {
+                    success: false,
+                    statusCode: 400,
+                    errorKey: 'INVALID_DATE_RANGE'
+                };
+            }
+            
+            const daysOfWeek = getDaysOfWeekFromDateRange(filters.startDate, filters.endDate);
+            
+            if (!daysOfWeek) {
+                return {
+                    success: false,
+                    statusCode: 400,
+                    errorKey: 'INVALID_DATE_FORMAT'
+                };
+            }
+            
+            // Replace date filters with days of week
+            filters.availableDays = daysOfWeek;
+            delete filters.startDate;
+            delete filters.endDate;
+        }
+        
         const skip = (page - 1) * limit;
         const services = await serviceRepository.findAll(filters, limit, skip);
         const total = await serviceRepository.count(filters);
+        
+        const pagination = calculatePagination(total, page, limit);
 
         return {
             success: true,
             statusCode: 200,
             data: {
                 services,
-                pagination: {
-                    total,
-                    page,
-                    limit,
-                    pages: Math.ceil(total / limit)
-                }
+                pagination
             }
         };
 

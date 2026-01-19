@@ -80,6 +80,10 @@ const errorMessages = {
   
   // City errors
   CITY_NOT_FOUND: 'City not found',
+  
+  // Date filtering errors
+  INVALID_DATE_RANGE: 'Both start date and end date are required for date range filtering',
+  INVALID_DATE_FORMAT: 'Invalid date format. Please provide valid dates in ISO format (YYYY-MM-DD)',
 };
 
 module.exports = errorMessages;
