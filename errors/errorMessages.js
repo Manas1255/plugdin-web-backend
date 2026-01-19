@@ -51,6 +51,35 @@ const errorMessages = {
   FILE_TOO_LARGE: 'File size exceeds the maximum allowed limit',
   FILE_INVALID_TYPE: 'Invalid file type',
   FILE_UPLOAD_ERROR: 'Error uploading file',
+  
+  // Service errors
+  SERVICE_NOT_FOUND: 'Service not found',
+  SERVICE_ALREADY_EXISTS: 'A service with this title already exists for your account',
+  INVALID_CATEGORY: 'Invalid category selected',
+  INVALID_SERVICING_AREA: 'One or more servicing areas are invalid',
+  INVALID_HOURLY_PRICE: 'Valid price per hour is required for hourly booking',
+  INVALID_PRICING_OPTION: 'Invalid pricing option details',
+  INVALID_SESSION_LENGTH: 'Session length must be greater than 0',
+  PRICING_OPTIONS_REQUIRED: 'At least one pricing option is required for fixed booking',
+  BOOKING_INTERVAL_REQUIRED: 'Booking start interval is required for hourly booking',
+  
+  // Availability errors
+  INVALID_AVAILABILITY: 'Invalid availability schedule provided',
+  INVALID_AVAILABILITY_FORMAT: 'Availability format is invalid',
+  INVALID_TIME_SLOT: 'Invalid time slot format',
+  TIME_SLOT_OVERLAP: 'Time slots cannot overlap',
+  
+  // Photo errors
+  INVALID_PHOTOS_FORMAT: 'Photos must be an array of URLs',
+  MAX_PHOTOS_EXCEEDED: 'Maximum 10 photos allowed per service',
+  INVALID_PHOTO_URL: 'Invalid photo URL provided',
+  
+  // Category errors
+  CATEGORY_NOT_FOUND: 'Category not found',
+  CATEGORY_ALREADY_EXISTS: 'Category already exists',
+  
+  // City errors
+  CITY_NOT_FOUND: 'City not found',
 };
 
 module.exports = errorMessages;
