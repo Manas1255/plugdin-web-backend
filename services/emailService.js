@@ -3,8 +3,8 @@ const sgMail = require('@sendgrid/mail');
 // Initialize SendGrid with API key from environment
 sgMail.setApiKey(process.env.SENDGRID_API_KEY || '');
 
-const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || 'no-reply@plugdin.com';
-const ADMIN_EMAIL = process.env.ADMIN_REVIEW_EMAIL || 'admin@plugdin.com';
+const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || 'plugdintemporary@gmail.com';
+const ADMIN_EMAIL = process.env.ADMIN_REVIEW_EMAIL || 'plugdintemporary@gmail.com';
 const APP_URL = process.env.APP_URL || 'http://localhost:3000';
 
 /**
