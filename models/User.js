@@ -32,9 +32,15 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Role is required'],
         enum: {
-            values: ['client', 'vendor'],
-            message: 'Role must be either "client" or "vendor"'
+            values: ['client', 'vendor', 'admin'],
+            message: 'Role must be either "client", "vendor", or "admin"'
         }
+    },
+    companyName: {
+        type: String,
+        default: null,
+        trim: true,
+        maxlength: [100, 'Company name cannot exceed 100 characters']
     },
     profilePicture: {
         type: String,
@@ -52,20 +58,15 @@ const userSchema = new mongoose.Schema({
 });
 
 // Hash password before saving
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function() {
     // Only hash the password if it has been modified (or is new)
     if (!this.isModified('password')) {
-        return next();
+        return;
     }
 
-    try {
-        // Hash password with cost of 10
-        const salt = await bcrypt.genSalt(10);
-        this.password = await bcrypt.hash(this.password, salt);
-        next();
-    } catch (error) {
-        next(error);
-    }
+    // Hash password with cost of 10
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
 });
 
 // Method to compare password for login
