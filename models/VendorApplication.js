@@ -116,7 +116,7 @@ const vendorApplicationSchema = new mongoose.Schema({
 });
 
 // Index for faster lookups
-vendorApplicationSchema.index({ email: 1 });
+// Note: email index is automatically created by unique: true, so we don't need to define it explicitly
 vendorApplicationSchema.index({ status: 1 });
 vendorApplicationSchema.index({ createdAt: -1 });
 
