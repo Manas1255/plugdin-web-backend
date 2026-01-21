@@ -84,6 +84,22 @@ const errorMessages = {
   // Date filtering errors
   INVALID_DATE_RANGE: 'Both start date and end date are required for date range filtering',
   INVALID_DATE_FORMAT: 'Invalid date format. Please provide valid dates in ISO format (YYYY-MM-DD)',
+  
+  // Vendor Application errors
+  APPLICATION_NOT_FOUND: 'Vendor application not found',
+  APPLICATION_ALREADY_PENDING: 'You already have a pending vendor application. Please wait for review.',
+  APPLICATION_ALREADY_APPROVED: 'This vendor application has already been approved',
+  APPLICATION_ALREADY_REJECTED: 'This vendor application has already been rejected',
+  COMPANY_NAME_REQUIRED: 'Company name is required',
+  BIO_REQUIRED: 'Bio is required',
+  SERVICE_TYPE_REQUIRED: 'Service type is required',
+  RESPONSE_TIME_REQUIRED: 'Typical response time to inquiries is required',
+  BOOKING_ADVANCE_REQUIRED: 'Booking advance and comfort with window information is required',
+  BACKUP_EQUIPMENT_REQUIRED: 'Backup equipment information is required (true/false)',
+  SERVICE_AGREEMENT_REQUIRED: 'Standard service agreement information is required (true/false)',
+  INVALID_APPROVAL_TOKEN: 'Invalid or expired approval token',
+  APPROVAL_TOKEN_EXPIRED: 'This approval link has expired. Please use the admin panel to review the application.',
+  USER_ALREADY_EXISTS: 'A user with this email already exists',
 };
 
 module.exports = errorMessages;

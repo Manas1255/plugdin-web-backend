@@ -19,6 +19,10 @@ router.use('/api/profile', require('./profile'));
 // Service routes (includes categories and cities)
 router.use('/api/services', require('./service'));
 
+// Vendor application routes
+router.use('/api/vendor-applications', require('./vendorApplication'));
+router.use('/api', require('./vendorApplication')); // For admin routes
+
 // Add your routes here
 // Example: router.use('/api/users', require('./users'));
 
