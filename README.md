@@ -190,6 +190,18 @@ npm test
 | `PORT` | No | Server port (default: 3000) |
 | `NODE_ENV` | No | Environment (development/production) |
 
+## Server Deployment (EC2 / PM2)
+
+After deploying (e.g. `git pull`) on the server, **always install dependencies** — `node_modules` is not in git:
+
+```bash
+cd /home/ubuntu/apps/backend/dev/plugdin-web-backend
+npm install
+pm2 restart plugdin-web-backend
+```
+
+If you see `MODULE_NOT_FOUND` when starting the app, it usually means `npm install` was not run on the server.
+
 ## Contributing
 
 1. Follow the architecture rules in `.cursorrules`
