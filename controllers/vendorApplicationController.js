@@ -320,5 +320,6 @@ module.exports = {
     approveApplicationAuth,
     approveApplicationLink,
     rejectApplicationAuth,
-    rejectApplicationLink
+    rejectApplicationLink,
+    viewApplicationLink
 };
