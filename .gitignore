@@ -136,3 +136,11 @@ coverage/
 test-results/
 playwright-report/
 playwright/.cache/
+
+# Security/Certificates
+*.pem
+*.key
+*.cert
+*.crt
+*.p12
+*.pfx
