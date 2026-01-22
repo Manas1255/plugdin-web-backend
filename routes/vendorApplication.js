@@ -81,4 +81,14 @@ router.get(
     vendorApplicationController.rejectApplicationLink
 );
 
+/**
+ * @route   GET /api/admin/vendor-applications/:id/view
+ * @desc    View vendor application via email link (no auth required)
+ * @access  Public (with token)
+ */
+router.get(
+    '/admin/vendor-applications/:id/view',
+    vendorApplicationController.viewApplicationLink
+);
+
 module.exports = router;

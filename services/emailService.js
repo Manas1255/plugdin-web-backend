@@ -14,6 +14,7 @@ const APP_URL = process.env.APP_URL || 'http://localhost:3000';
  */
 const sendVendorApplicationToAdmin = async (application, approvalToken) => {
     try {
+        const viewUrl = `${APP_URL}/api/admin/vendor-applications/${application._id}/view?token=${approvalToken}`;
         const approveUrl = `${APP_URL}/api/admin/vendor-applications/${application._id}/approve?token=${approvalToken}`;
         const rejectUrl = `${APP_URL}/api/admin/vendor-applications/${application._id}/reject?token=${approvalToken}`;
 
@@ -108,6 +109,7 @@ const sendVendorApplicationToAdmin = async (application, approvalToken) => {
             </div>` : ''}
             
             <div class="button-container">
+                <a href="${viewUrl}" class="button" style="background-color: #2196F3; margin-bottom: 10px; display: block;">📋 VIEW APPLICATION</a>
                 <a href="${approveUrl}" class="button approve-button">✓ APPROVE</a>
                 <a href="${rejectUrl}" class="button reject-button">✗ REJECT</a>
             </div>
@@ -131,6 +133,7 @@ const sendVendorApplicationToAdmin = async (application, approvalToken) => {
 Company: ${application.companyName}
 Service Type: ${application.serviceType}
 
+View Application: ${viewUrl}
 Approve: ${approveUrl}
 Reject: ${rejectUrl}
 

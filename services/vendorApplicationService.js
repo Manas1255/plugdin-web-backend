@@ -210,6 +210,55 @@ const getApplicationById = async (applicationId) => {
 };
 
 /**
+ * Get vendor application for review via token (no auth required)
+ */
+const getApplicationForReview = async (applicationId, token) => {
+    const application = await vendorApplicationRepository.findByIdWithToken(applicationId);
+
+    if (!application) {
+        return {
+            success: false,
+            statusCode: 404,
+            errorKey: 'APPLICATION_NOT_FOUND'
+        };
+    }
+
+    // Validate token
+    if (!application.approvalToken || !application.approvalTokenExpiry) {
+        return {
+            success: false,
+            statusCode: 400,
+            errorKey: 'INVALID_APPROVAL_TOKEN'
+        };
+    }
+
+    // Check token expiry
+    if (new Date() > application.approvalTokenExpiry) {
+        return {
+            success: false,
+            statusCode: 400,
+            errorKey: 'APPROVAL_TOKEN_EXPIRED'
+        };
+    }
+
+    // Validate token
+    const hashedProvidedToken = hashToken(token);
+    if (hashedProvidedToken !== application.approvalToken) {
+        return {
+            success: false,
+            statusCode: 400,
+            errorKey: 'INVALID_APPROVAL_TOKEN'
+        };
+    }
+
+    return {
+        success: true,
+        statusCode: 200,
+        data: { application }
+    };
+};
+
+/**
  * Approve vendor application (admin only)
  */
 const approveApplication = async (applicationId, adminId, token = null) => {
@@ -431,6 +480,7 @@ module.exports = {
     applyAsVendor,
     getApplicationsList,
     getApplicationById,
+    getApplicationForReview,
     approveApplication,
     rejectApplication
 };
