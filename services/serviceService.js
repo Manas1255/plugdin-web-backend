@@ -95,8 +95,11 @@ const validateAvailability = (availability) => {
 
 /**
  * Create a new service
+ * @param {string} vendorId - Vendor user ID
+ * @param {object} serviceData - Service data
+ * @param {string} [preGeneratedId] - Optional pre-generated service ID (for S3 folder organization)
  */
-const createService = async (vendorId, serviceData) => {
+const createService = async (vendorId, serviceData, preGeneratedId = null) => {
     try {
         // Validate category exists
         const category = await categoryRepository.findByName(serviceData.category);
@@ -226,7 +229,7 @@ const createService = async (vendorId, serviceData) => {
                 };
             }
 
-            // Validate photo URLs (basic validation)
+            // Validate photo URLs (basic validation - should be valid URLs)
             for (const photo of serviceData.photos) {
                 if (typeof photo !== 'string' || photo.trim() === '') {
                     return {
@@ -238,11 +241,19 @@ const createService = async (vendorId, serviceData) => {
             }
         }
 
-        // Create service
-        const service = await serviceRepository.createService({
+        // Prepare service data with optional pre-generated ID
+        const servicePayload = {
             ...serviceData,
             vendor: vendorId
-        });
+        };
+
+        // If a pre-generated ID is provided (for S3 folder organization), use it
+        if (preGeneratedId) {
+            servicePayload._id = preGeneratedId;
+        }
+
+        // Create service
+        const service = await serviceRepository.createService(servicePayload);
 
         return {
             success: true,

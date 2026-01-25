@@ -52,6 +52,11 @@ const userSchema = new mongoose.Schema({
         default: null,
         trim: true,
         maxlength: [500, 'Bio cannot exceed 500 characters']
+    },
+    stripeCustomerId: {
+        type: String,
+        default: null,
+        trim: true
     }
 }, {
     timestamps: true // Adds createdAt and updatedAt fields

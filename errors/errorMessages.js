@@ -51,6 +51,9 @@ const errorMessages = {
   FILE_TOO_LARGE: 'File size exceeds the maximum allowed limit',
   FILE_INVALID_TYPE: 'Invalid file type',
   FILE_UPLOAD_ERROR: 'Error uploading file',
+  S3_UPLOAD_ERROR: 'Failed to upload file to S3',
+  IMAGE_ONLY_ALLOWED: 'Only images are allowed (jpg, jpeg, png, webp)',
+  MAX_IMAGES_EXCEEDED: 'Maximum 10 images allowed',
   
   // Service errors
   SERVICE_NOT_FOUND: 'Service not found',
@@ -100,6 +103,24 @@ const errorMessages = {
   INVALID_APPROVAL_TOKEN: 'Invalid or expired approval token',
   APPROVAL_TOKEN_EXPIRED: 'This approval link has expired. Please use the admin panel to review the application.',
   USER_ALREADY_EXISTS: 'A user with this email already exists',
+  
+  // Booking Request errors
+  BOOKING_REQUEST_NOT_FOUND: 'Booking request not found',
+  BOOKING_CONFLICT: 'This time slot is already booked',
+  INVALID_BOOKING_TIME: 'Invalid booking time or date',
+  INVALID_BOOKING_STATUS: 'Invalid booking status for this operation',
+  SERVICE_NOT_AVAILABLE: 'Service is not available for booking',
+  INVALID_SERVICE_PRICING: 'Service pricing is not configured correctly',
+  INVALID_PRICING_OPTION: 'Invalid pricing option selected',
+  INVALID_SERVICE_TYPE: 'Invalid service type',
+  CLIENT_NOT_FOUND: 'Client not found',
+  INVALID_SETUP_INTENT: 'Invalid setup intent',
+  SETUP_INTENT_NOT_COMPLETED: 'Payment method setup not completed',
+  PAYMENT_METHOD_NOT_FOUND: 'Payment method not found',
+  PAYMENT_FAILED: 'Payment processing failed',
+  CARD_DECLINED: 'Card was declined',
+  STRIPE_AUTH_ERROR: 'Stripe authentication error',
+  STRIPE_API_ERROR: 'Stripe API error',
 };
 
 module.exports = errorMessages;

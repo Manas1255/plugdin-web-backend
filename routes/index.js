@@ -23,6 +23,11 @@ router.use('/api/services', require('./service'));
 router.use('/api/vendor-applications', require('./vendorApplication'));
 router.use('/api', require('./vendorApplication')); // For admin routes
 
+// Booking request routes
+router.use('/api/booking-requests', require('./bookingRequest'));
+// Vendor booking routes (mounted at /api/vendor to match expected paths)
+router.use('/api/vendor', require('./bookingRequest'));
+
 // Add your routes here
 // Example: router.use('/api/users', require('./users'));
 
