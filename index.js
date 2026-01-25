@@ -24,6 +24,11 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+// Webhook routes must use raw body - register before JSON middleware
+// Apply raw body middleware only to webhook routes
+app.use('/api/webhooks', express.raw({ type: 'application/json' }), require('./routes/webhooks'));
+
+// JSON middleware for all other routes
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

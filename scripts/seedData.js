@@ -34,6 +34,396 @@ const categories = [
             'You Determine Location'
         ],
         isActive: true
+    },
+    {
+        name: 'Venue',
+        slug: 'venue',
+        packageSpecifications: [
+            '- N/A - This listing is for tailored add-ons only',
+            'Indoor Space Available',
+            'Outdoor Space Available',
+            'Private Venue (Exclusive Use)',
+            'Wheelchair Accessible',
+            'Parking Available',
+            'On-site Staff Support',
+            'Security Included',
+            'Cleaning Included',
+            'Setup & Teardown Included',
+            'Tables & Chairs Provided',
+            'Basic Decor Included',
+            'Lighting Included',
+            'Sound System Available',
+            'Stage / Platform Available',
+            'Changing / Dressing Rooms',
+            'Restrooms On-site',
+            'Climate Controlled (AC/Heating)',
+            'Power Supply for Equipment',
+            'Catering Allowed',
+            'In-house Catering Available',
+            'Alcohol Permitted',
+            'Kitchen Access',
+            'Wi-Fi Available',
+            'Projector / Screen Available',
+            'Photo & Video Friendly',
+            'Pet Friendly',
+            'Noise Restrictions Apply',
+            'Event Duration Flexible',
+            'Custom Layout Available'
+        ],
+        isActive: true
+    },
+    {
+        name: 'Decor',
+        slug: 'decor',
+        packageSpecifications: [
+            '- N/A - This listing is for tailored add-ons only',
+            'Theme-based Styling',
+            'Custom Color Palettes',
+            'Backdrop Design & Setup',
+            'Table Centerpieces',
+            'Stage Decor',
+            'Entrance Styling',
+            'Ceiling Draping',
+            'Lighting Accents',
+            'Props & Accessories Included',
+            'Setup & Teardown Included',
+            'On-site Stylist',
+            'Custom Signage',
+            'Floral Integration',
+            'Reusable / Eco-friendly Options',
+            'Venue Walkthrough Included'
+        ],
+        isActive: true
+    },
+    {
+        name: 'Videographer',
+        slug: 'videographer',
+        packageSpecifications: [
+            '- N/A - This listing is for tailored add-ons only',
+            '4K Video Recording',
+            'Cinematic Editing',
+            'Drone Footage',
+            'Highlight Reel',
+            'Full Event Coverage',
+            'Raw Footage Delivery',
+            'Multiple Camera Angles',
+            'Professional Audio Capture',
+            'Same-day Edit Available',
+            'Digital Delivery',
+            'USB / Drive Delivery',
+            'Social Media Clips',
+            'Color Grading',
+            'On-site Director'
+        ],
+        isActive: true
+    },
+    {
+        name: 'Event Planner',
+        slug: 'event-planner',
+        packageSpecifications: [
+            '- N/A - This listing is for tailored add-ons only',
+            'Full Event Planning',
+            'Day-of Coordination',
+            'Vendor Management',
+            'Timeline Creation',
+            'Budget Planning',
+            'Venue Coordination',
+            'Guest Management',
+            'On-site Supervision',
+            'Emergency Handling',
+            'Custom Event Concepts',
+            'Theme Development',
+            'Post-event Wrap-up'
+        ],
+        isActive: true
+    },
+    {
+        name: 'DJ',
+        slug: 'dj',
+        packageSpecifications: [
+            '- N/A - This listing is for tailored add-ons only',
+            'Professional DJ Booth',
+            'Custom Playlists',
+            'MC Services',
+            'Wireless Microphones',
+            'Lighting Effects',
+            'Dance Floor Lighting',
+            'Sound System Included',
+            'Crowd Engagement',
+            'Genre Flexibility',
+            'Live Mixing',
+            'Setup & Teardown'
+        ],
+        isActive: true
+    },
+    {
+        name: 'Audio Visual',
+        slug: 'audio-visual',
+        packageSpecifications: [
+            '- N/A - This listing is for tailored add-ons only',
+            'PA System',
+            'Microphones',
+            'LED Screens',
+            'Projectors',
+            'Stage Lighting',
+            'Live Streaming Setup',
+            'On-site Technician',
+            'Power Distribution',
+            'Cable Management',
+            'Recording Support',
+            'Setup & Teardown'
+        ],
+        isActive: true
+    },
+    {
+        name: 'Bartending',
+        slug: 'bartending',
+        packageSpecifications: [
+            '- N/A - This listing is for tailored add-ons only',
+            'Professional Bartenders',
+            'Signature Cocktails',
+            'Glassware Included',
+            'Bar Setup',
+            'Non-alcoholic Options',
+            'Menu Customization',
+            'Ice & Garnishes',
+            'Cleanup Included',
+            'Mobile Bar Available'
+        ],
+        isActive: true
+    },
+    {
+        name: 'Tents',
+        slug: 'tents',
+        packageSpecifications: [
+            '- N/A - This listing is for tailored add-ons only',
+            'Weather-resistant Tents',
+            'Clear Top Option',
+            'Sidewalls Included',
+            'Flooring Available',
+            'Lighting Options',
+            'Climate Control',
+            'Setup & Teardown',
+            'Custom Sizes',
+            'Branding Available'
+        ],
+        isActive: true
+    },
+    {
+        name: 'Floorwraps',
+        slug: 'floorwraps',
+        packageSpecifications: [
+            '- N/A - This listing is for tailored add-ons only',
+            'Custom Printed Designs',
+            'Dance Floor Wraps',
+            'Logo Branding',
+            'Waterproof Material',
+            'Slip-resistant Finish',
+            'Installation Included',
+            'Removal Included'
+        ],
+        isActive: true
+    },
+    {
+        name: 'Transportation',
+        slug: 'transportation',
+        packageSpecifications: [
+            '- N/A - This listing is for tailored add-ons only',
+            'Luxury Vehicles',
+            'Chauffeur Service',
+            'Group Transport',
+            'Decorated Vehicles',
+            'On-time Guarantee',
+            'Multiple Stops',
+            'Fuel Included',
+            'Standby Support'
+        ],
+        isActive: true
+    },
+    {
+        name: 'Catering',
+        slug: 'catering',
+        packageSpecifications: [
+            '- N/A - This listing is for tailored add-ons only',
+            'Custom Menus',
+            'Dietary Options',
+            'Buffet Service',
+            'Plated Service',
+            'Live Stations',
+            'Staff Included',
+            'Tableware Provided',
+            'Cleanup Included',
+            'Tasting Session'
+        ],
+        isActive: true
+    },
+    {
+        name: 'Entertainment',
+        slug: 'entertainment',
+        packageSpecifications: [
+            '- N/A - This listing is for tailored add-ons only',
+            'Live Bands',
+            'Solo Performers',
+            'Dance Acts',
+            'Cultural Performances',
+            'Custom Acts',
+            'Stage Setup',
+            'Costume Included',
+            'Audience Interaction'
+        ],
+        isActive: true
+    },
+    {
+        name: 'Photobooths',
+        slug: 'photobooth',
+        packageSpecifications: [
+            '- N/A - This listing is for tailored add-ons only',
+            'Instant Prints',
+            'Digital Gallery',
+            'Custom Backdrops',
+            'Props Included',
+            'Branding Available',
+            'GIF & Boomerang',
+            'On-site Attendant',
+            'Unlimited Sessions'
+        ],
+        isActive: true
+    },
+    {
+        name: 'Dessert Stations',
+        slug: 'dessert-stations',
+        packageSpecifications: [
+            '- N/A - This listing is for tailored add-ons only',
+            'Custom Dessert Menu',
+            'Live Serving',
+            'Themed Display',
+            'Dietary Options',
+            'Staff Included',
+            'Setup & Teardown',
+            'Packaging Included'
+        ],
+        isActive: true
+    },
+    {
+        name: 'Special Effects',
+        slug: 'special-effects',
+        packageSpecifications: [
+            '- N/A - This listing is for tailored add-ons only',
+            'Cold Sparklers',
+            'Fog Machines',
+            'Confetti Cannons',
+            'CO2 Jets',
+            'Fireworks Coordination',
+            'Safety Certified',
+            'Operator Included'
+        ],
+        isActive: true
+    },
+    {
+        name: 'Florals',
+        slug: 'florals',
+        packageSpecifications: [
+            '- N/A - This listing is for tailored add-ons only',
+            'Bouquets',
+            'Centerpieces',
+            'Stage Florals',
+            'Entrance Decor',
+            'Fresh Flowers',
+            'Artificial Options',
+            'Setup & Teardown',
+            'Theme Matching'
+        ],
+        isActive: true
+    },
+    {
+        name: 'Wedding Cakes',
+        slug: 'wedding-cakes',
+        packageSpecifications: [
+            '- N/A - This listing is for tailored add-ons only',
+            'Custom Designs',
+            'Multiple Tiers',
+            'Dietary Options',
+            'Tasting Session',
+            'Delivery Included',
+            'On-site Setup',
+            'Cake Stand Provided'
+        ],
+        isActive: true
+    },
+    {
+        name: 'Wedding Clothing',
+        slug: 'wedding-clothing',
+        packageSpecifications: [
+            '- N/A - This listing is for tailored add-ons only',
+            'Custom Tailoring',
+            'Designer Wear',
+            'Accessories Included',
+            'Fittings Included',
+            'Alterations',
+            'Rental Options',
+            'Styling Consultation'
+        ],
+        isActive: true
+    },
+    {
+        name: 'Wedding Rings',
+        slug: 'wedding-rings',
+        packageSpecifications: [
+            '- N/A - This listing is for tailored add-ons only',
+            'Custom Engraving',
+            'Precious Metals',
+            'Gemstone Options',
+            'Sizing Included',
+            'Certification Provided',
+            'Warranty Included'
+        ],
+        isActive: true
+    },
+    {
+        name: 'Makeup & Hair',
+        slug: 'makeup-hair',
+        packageSpecifications: [
+            '- N/A - This listing is for tailored add-ons only',
+            'Bridal Makeup',
+            'Hair Styling',
+            'Trial Session',
+            'On-site Service',
+            'Touch-ups',
+            'Group Packages',
+            'Premium Products'
+        ],
+        isActive: true
+    },
+    {
+        name: 'Event Supplies',
+        slug: 'event-supplies',
+        packageSpecifications: [
+            '- N/A - This listing is for tailored add-ons only',
+            'Tableware',
+            'Signage',
+            'Guest Favors',
+            'Disposable Supplies',
+            'Custom Branding',
+            'Bulk Orders',
+            'Delivery Available'
+        ],
+        isActive: true
+    },
+    {
+        name: 'Event Rentals',
+        slug: 'event-rentals',
+        packageSpecifications: [
+            '- N/A - This listing is for tailored add-ons only',
+            'Furniture Rental',
+            'Stage Equipment',
+            'Lighting Equipment',
+            'AV Gear',
+            'Decor Props',
+            'Delivery Included',
+            'Setup & Teardown',
+            'Damage Coverage'
+        ],
+        isActive: true
     }
 ];
 

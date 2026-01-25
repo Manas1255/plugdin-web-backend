@@ -4,6 +4,7 @@ const serviceController = require('../controllers/serviceController');
 const categoryController = require('../controllers/categoryController');
 const cityController = require('../controllers/cityController');
 const { authenticate, authorize } = require('../middleware/auth');
+const { uploadServiceImages, handleMulterError } = require('../middleware/upload');
 
 // Public routes
 /**
@@ -222,7 +223,22 @@ router.get('/cities/all', cityController.getAllCities);
  * /api/services:
  *   post:
  *     summary: Create a new service
- *     description: Create a new service listing (vendor only)
+ *     description: |
+ *       Create a new service listing (vendor only). 
+ *       
+ *       **Supports two content types:**
+ *       - `application/json` - Send service data with photo URLs (existing method)
+ *       - `multipart/form-data` - Upload images directly (up to 10 images, max 20MB each)
+ *       
+ *       **File Upload Requirements:**
+ *       - Allowed formats: jpg, jpeg, png, webp
+ *       - Maximum 10 images per request
+ *       - Maximum 20MB per file
+ *       - Field name for images: `photos` (array)
+ *       
+ *       **JSON Fields in Multipart:**
+ *       - Complex fields (availability, pricingOptions, servicingArea, packageSpecifications) 
+ *         should be sent as JSON strings and will be automatically parsed
  *     tags: [Services]
  *     security:
  *       - bearerAuth: []
@@ -232,6 +248,88 @@ router.get('/cities/all', cityController.getAllCities);
  *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/CreateServiceRequest'
+ *           example:
+ *             listingType: hourly
+ *             category: Photographer
+ *             listingTitle: Professional Wedding Photography
+ *             listingDescription: High-quality wedding photography with professional equipment
+ *             servicingArea: ["Toronto", "Mississauga"]
+ *             pricePerHour: 150
+ *             bookingStartInterval: every_hour
+ *             availability:
+ *               timezone: America/Toronto
+ *               weeklySchedule:
+ *                 - dayOfWeek: monday
+ *                   isAvailable: true
+ *                   timeSlots:
+ *                     - startTime: "09:00"
+ *                       endTime: "17:00"
+ *             photos: ["https://s3.amazonaws.com/bucket/photo1.jpg"]
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - listingType
+ *               - category
+ *               - listingTitle
+ *               - listingDescription
+ *               - servicingArea
+ *             properties:
+ *               listingType:
+ *                 type: string
+ *                 enum: [hourly, fixed]
+ *                 description: Type of service listing
+ *                 example: hourly
+ *               category:
+ *                 type: string
+ *                 description: Service category name
+ *                 example: Photographer
+ *               listingTitle:
+ *                 type: string
+ *                 maxLength: 200
+ *                 description: Service title
+ *                 example: Professional Wedding Photography
+ *               listingDescription:
+ *                 type: string
+ *                 maxLength: 2000
+ *                 description: Detailed service description
+ *                 example: High-quality wedding photography with professional equipment
+ *               packageSpecifications:
+ *                 type: string
+ *                 description: JSON array string of package specifications
+ *                 example: '["High Resolution Photos", "Photo Retouching/Editing"]'
+ *               servicingArea:
+ *                 type: string
+ *                 description: JSON array string of cities/areas
+ *                 example: '["Toronto", "Mississauga", "Brampton"]'
+ *               pricePerHour:
+ *                 type: number
+ *                 description: Price per hour (required for hourly booking)
+ *                 example: 150
+ *               bookingStartInterval:
+ *                 type: string
+ *                 enum: [every_hour, every_half_hour, every_quarter_hour]
+ *                 description: Booking interval (required for hourly booking)
+ *                 example: every_hour
+ *               pricingOptions:
+ *                 type: string
+ *                 description: JSON array string of pricing options (required for fixed booking)
+ *                 example: '[{"name":"Premium Package - 2 Hours","pricePerSession":300,"sessionLength":{"hours":2,"minutes":0}}]'
+ *               availability:
+ *                 type: string
+ *                 description: JSON object string for availability schedule
+ *                 example: '{"timezone":"America/Toronto","weeklySchedule":[{"dayOfWeek":"monday","isAvailable":true,"timeSlots":[{"startTime":"09:00","endTime":"17:00"}]}]}'
+ *               photos:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *                 description: |
+ *                   Service images (up to 10 files)
+ *                   - Allowed formats: jpg, jpeg, png, webp
+ *                   - Maximum 20MB per file
+ *                   - Files are uploaded to S3 and URLs are returned
+ *                 maxItems: 10
  *     responses:
  *       201:
  *         description: Service created successfully
@@ -247,16 +345,51 @@ router.get('/cities/all', cityController.getAllCities);
  *                       properties:
  *                         message:
  *                           type: string
+ *                           example: Service created successfully
  *                         service:
  *                           $ref: '#/components/schemas/Service'
+ *             example:
+ *               statusCode: 201
+ *               data:
+ *                 message: Service created successfully
+ *                 service:
+ *                   id: 507f1f77bcf86cd799439011
+ *                   listingType: hourly
+ *                   category: Photographer
+ *                   listingTitle: Professional Wedding Photography
+ *                   photos:
+ *                     - https://plugdin-web-bucket.s3.amazonaws.com/services/507f1f77bcf86cd799439011/uuid1.jpg
+ *                     - https://plugdin-web-bucket.s3.amazonaws.com/services/507f1f77bcf86cd799439011/uuid2.jpg
  *       400:
- *         description: Validation error
+ *         description: Validation error (invalid file type, file too large, max files exceeded, or other validation errors)
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
+ *             examples:
+ *               invalidFileType:
+ *                 value:
+ *                   statusCode: 400
+ *                   data: null
+ *                   error:
+ *                     timestamp: "2024-01-01T00:00:00.000Z"
+ *                     message: Only images are allowed (jpg, jpeg, png, webp)
+ *               fileTooLarge:
+ *                 value:
+ *                   statusCode: 400
+ *                   data: null
+ *                   error:
+ *                     timestamp: "2024-01-01T00:00:00.000Z"
+ *                     message: File size exceeds 20MB limit
+ *               maxFilesExceeded:
+ *                 value:
+ *                   statusCode: 400
+ *                   data: null
+ *                   error:
+ *                     timestamp: "2024-01-01T00:00:00.000Z"
+ *                     message: Maximum 10 images allowed
  *       401:
- *         description: Unauthorized
+ *         description: Unauthorized - Missing or invalid authentication token
  *         content:
  *           application/json:
  *             schema:
@@ -268,13 +401,19 @@ router.get('/cities/all', cityController.getAllCities);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  *       409:
- *         description: Service already exists
+ *         description: Service already exists - A service with this title already exists for your account
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error (e.g., S3 upload failure)
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.post('/', authenticate, authorize('vendor'), serviceController.createService);
+router.post('/', authenticate, authorize('vendor'), uploadServiceImages, handleMulterError, serviceController.createService);
 
 /**
  * @swagger
