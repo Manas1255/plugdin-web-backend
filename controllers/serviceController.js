@@ -8,74 +8,73 @@ const mongoose = require('mongoose');
 
 /**
  * Create a new service
- * Supports both JSON (with photo URLs) and multipart/form-data (with file uploads)
+ * Requires multipart/form-data with file uploads for photos
  */
 const createService = async (req, res) => {
     try {
         const vendorId = req.user._id;
         let serviceData = req.body;
 
-        // Handle multipart/form-data: Parse JSON fields if they're strings
+        // Parse JSON fields that might be sent as strings in multipart/form-data
         // Multer parses form fields as strings, so we need to parse JSON fields
-        if (req.is('multipart/form-data') || req.files) {
-            // Parse JSON fields that might be sent as strings
-            const jsonFields = ['availability', 'pricingOptions', 'servicingArea', 'packageSpecifications'];
-            jsonFields.forEach(field => {
-                if (serviceData[field] && typeof serviceData[field] === 'string') {
-                    try {
-                        serviceData[field] = JSON.parse(serviceData[field]);
-                    } catch (e) {
-                        // If parsing fails, keep the original value
-                    }
+        const jsonFields = ['availability', 'pricingOptions', 'servicingArea', 'packageSpecifications'];
+        jsonFields.forEach(field => {
+            if (serviceData[field] && typeof serviceData[field] === 'string') {
+                try {
+                    serviceData[field] = JSON.parse(serviceData[field]);
+                } catch (e) {
+                    // If parsing fails, keep the original value
                 }
+            }
+        });
+
+        // Parse numeric fields
+        if (serviceData.pricePerHour && typeof serviceData.pricePerHour === 'string') {
+            serviceData.pricePerHour = parseFloat(serviceData.pricePerHour);
+        }
+
+        // Require file uploads for photos
+        if (!req.files || req.files.length === 0) {
+            return sendResponse(res, 400, null, {
+                message: getErrorMessage('PHOTOS_REQUIRED', errorMessages)
             });
-
-            // Parse numeric fields
-            if (serviceData.pricePerHour && typeof serviceData.pricePerHour === 'string') {
-                serviceData.pricePerHour = parseFloat(serviceData.pricePerHour);
-            }
         }
 
-        let serviceId = null;
-
-        // Handle file uploads if present
-        if (req.files && req.files.length > 0) {
-            // Validate file count
-            if (req.files.length > 10) {
-                return sendResponse(res, 400, null, {
-                    message: getErrorMessage('MAX_IMAGES_EXCEEDED', errorMessages)
-                });
-            }
-
-            // Generate serviceId first (needed for S3 folder structure)
-            serviceId = new mongoose.Types.ObjectId();
-            const photoUrls = [];
-
-            // Upload all files to S3
-            try {
-                for (const file of req.files) {
-                    const folder = `services/${serviceId}`;
-                    const url = await uploadToS3(
-                        file.buffer,
-                        file.originalname,
-                        file.mimetype,
-                        folder
-                    );
-                    photoUrls.push(url);
-                }
-            } catch (uploadError) {
-                console.error('S3 upload error:', uploadError);
-                return sendResponse(res, 500, null, {
-                    message: getErrorMessage('S3_UPLOAD_ERROR', errorMessages)
-                });
-            }
-
-            // Add photo URLs to service data
-            serviceData.photos = photoUrls;
+        // Validate file count
+        if (req.files.length > 10) {
+            return sendResponse(res, 400, null, {
+                message: getErrorMessage('MAX_IMAGES_EXCEEDED', errorMessages)
+            });
         }
+
+        // Generate serviceId first (needed for S3 folder structure)
+        const serviceId = new mongoose.Types.ObjectId();
+        const photoUrls = [];
+
+        // Upload all files to S3
+        try {
+            for (const file of req.files) {
+                const folder = `services/${serviceId}`;
+                const url = await uploadToS3(
+                    file.buffer,
+                    file.originalname,
+                    file.mimetype,
+                    folder
+                );
+                photoUrls.push(url);
+            }
+        } catch (uploadError) {
+            console.error('S3 upload error:', uploadError);
+            return sendResponse(res, 500, null, {
+                message: getErrorMessage('S3_UPLOAD_ERROR', errorMessages)
+            });
+        }
+
+        // Add photo URLs to service data
+        serviceData.photos = photoUrls;
 
         // Create service (serviceService will handle validation and creation)
-        // Pass the pre-generated serviceId if files were uploaded (for S3 folder organization)
+        // Pass the pre-generated serviceId for S3 folder organization
         const result = await serviceService.createService(vendorId, serviceData, serviceId);
 
         if (!result.success) {

@@ -126,6 +126,9 @@
  * 
  *     CreateServiceRequest:
  *       type: object
+ *       description: |
+ *         Schema for reference only. Actual requests must use multipart/form-data.
+ *         Photos must be uploaded as files (not URLs) using the 'photos' field.
  *       required:
  *         - listingType
  *         - category

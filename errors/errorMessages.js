@@ -73,6 +73,7 @@ const errorMessages = {
   TIME_SLOT_OVERLAP: 'Time slots cannot overlap',
   
   // Photo errors
+  PHOTOS_REQUIRED: 'Photos are required. Please upload at least one photo file.',
   INVALID_PHOTOS_FORMAT: 'Photos must be an array of URLs',
   MAX_PHOTOS_EXCEEDED: 'Maximum 10 photos allowed per service',
   INVALID_PHOTO_URL: 'Invalid photo URL provided',

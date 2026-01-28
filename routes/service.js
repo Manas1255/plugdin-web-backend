@@ -226,15 +226,15 @@ router.get('/cities/all', cityController.getAllCities);
  *     description: |
  *       Create a new service listing (vendor only). 
  *       
- *       **Supports two content types:**
- *       - `application/json` - Send service data with photo URLs (existing method)
- *       - `multipart/form-data` - Upload images directly (up to 10 images, max 20MB each)
+ *       **Content Type:** `multipart/form-data` (required)
  *       
  *       **File Upload Requirements:**
+ *       - Photos are required (at least one image)
  *       - Allowed formats: jpg, jpeg, png, webp
  *       - Maximum 10 images per request
  *       - Maximum 20MB per file
  *       - Field name for images: `photos` (array)
+ *       - Files are uploaded to S3 and URLs are automatically generated
  *       
  *       **JSON Fields in Multipart:**
  *       - Complex fields (availability, pricingOptions, servicingArea, packageSpecifications) 
@@ -245,26 +245,6 @@ router.get('/cities/all', cityController.getAllCities);
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/CreateServiceRequest'
- *           example:
- *             listingType: hourly
- *             category: Photographer
- *             listingTitle: Professional Wedding Photography
- *             listingDescription: High-quality wedding photography with professional equipment
- *             servicingArea: ["Toronto", "Mississauga"]
- *             pricePerHour: 150
- *             bookingStartInterval: every_hour
- *             availability:
- *               timezone: America/Toronto
- *               weeklySchedule:
- *                 - dayOfWeek: monday
- *                   isAvailable: true
- *                   timeSlots:
- *                     - startTime: "09:00"
- *                       endTime: "17:00"
- *             photos: ["https://s3.amazonaws.com/bucket/photo1.jpg"]
  *         multipart/form-data:
  *           schema:
  *             type: object
@@ -274,6 +254,7 @@ router.get('/cities/all', cityController.getAllCities);
  *               - listingTitle
  *               - listingDescription
  *               - servicingArea
+ *               - photos
  *             properties:
  *               listingType:
  *                 type: string
@@ -325,10 +306,11 @@ router.get('/cities/all', cityController.getAllCities);
  *                   type: string
  *                   format: binary
  *                 description: |
- *                   Service images (up to 10 files)
+ *                   Service images (required, 1-10 files)
  *                   - Allowed formats: jpg, jpeg, png, webp
  *                   - Maximum 20MB per file
  *                   - Files are uploaded to S3 and URLs are returned
+ *                 minItems: 1
  *                 maxItems: 10
  *     responses:
  *       201:
@@ -367,6 +349,13 @@ router.get('/cities/all', cityController.getAllCities);
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  *             examples:
+ *               photosRequired:
+ *                 value:
+ *                   statusCode: 400
+ *                   data: null
+ *                   error:
+ *                     timestamp: "2024-01-01T00:00:00.000Z"
+ *                     message: Photos are required. Please upload at least one photo file.
  *               invalidFileType:
  *                 value:
  *                   statusCode: 400

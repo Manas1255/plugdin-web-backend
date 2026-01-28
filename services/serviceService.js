@@ -211,7 +211,7 @@ const createService = async (vendorId, serviceData, preGeneratedId = null) => {
             }
         }
 
-        // Validate photos
+        // Validate photos (should be an array of URLs from file uploads)
         if (serviceData.photos) {
             if (!Array.isArray(serviceData.photos)) {
                 return {
@@ -229,7 +229,7 @@ const createService = async (vendorId, serviceData, preGeneratedId = null) => {
                 };
             }
 
-            // Validate photo URLs (basic validation - should be valid URLs)
+            // Validate photo URLs are valid strings (from S3 uploads)
             for (const photo of serviceData.photos) {
                 if (typeof photo !== 'string' || photo.trim() === '') {
                     return {
