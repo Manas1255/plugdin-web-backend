@@ -38,8 +38,11 @@ SENDGRID_API_KEY=your_sendgrid_api_key_here
 SENDGRID_FROM_EMAIL=no-reply@plugdin.com
 ADMIN_REVIEW_EMAIL=admin@plugdin.com
 
-# Application URL (used in email links)
-APP_URL=http://localhost:3000
+# URLs (used in emails)
+# APP_URL = frontend base URL (e.g. login link in vendor approval email)
+# API_URL = backend base URL – **required** for admin approve/reject/view links in inbox emails
+APP_URL=http://localhost:5173
+API_URL=http://localhost:3000
 
 # Server Configuration
 PORT=3000

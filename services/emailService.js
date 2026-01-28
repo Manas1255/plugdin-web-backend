@@ -6,6 +6,8 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY || '');
 const FROM_EMAIL = process.env.SENDGRID_FROM_EMAIL || 'plugdintemporary@gmail.com';
 const ADMIN_EMAIL = process.env.ADMIN_REVIEW_EMAIL || 'plugdintemporary@gmail.com';
 const APP_URL = process.env.APP_URL || 'http://localhost:3000';
+/** Backend API base URL – used for approve/reject/view links in admin email (must hit API, not frontend) */
+const API_URL = process.env.API_URL || process.env.APP_URL || 'http://localhost:3000';
 
 /**
  * Send vendor application notification to admin
@@ -14,9 +16,9 @@ const APP_URL = process.env.APP_URL || 'http://localhost:3000';
  */
 const sendVendorApplicationToAdmin = async (application, approvalToken) => {
     try {
-        const viewUrl = `${APP_URL}/api/admin/vendor-applications/${application._id}/view?token=${approvalToken}`;
-        const approveUrl = `${APP_URL}/api/admin/vendor-applications/${application._id}/approve?token=${approvalToken}`;
-        const rejectUrl = `${APP_URL}/api/admin/vendor-applications/${application._id}/reject?token=${approvalToken}`;
+        const viewUrl = `${API_URL}/api/admin/vendor-applications/${application._id}/view?token=${approvalToken}`;
+        const approveUrl = `${API_URL}/api/admin/vendor-applications/${application._id}/approve?token=${approvalToken}`;
+        const rejectUrl = `${API_URL}/api/admin/vendor-applications/${application._id}/reject?token=${approvalToken}`;
 
         const htmlContent = `
 <!DOCTYPE html>
