@@ -15,7 +15,7 @@ const options = {
                 description: 'Local development server',
             },
             {
-                url: process.env.API_URL || `http://ec2-3-214-48-224.compute-1.amazonaws.com:${process.env.PORT || 3000}`,
+                url: 'http://ec2-3-214-48-224.compute-1.amazonaws.com',
                 description: 'Production server',
             },
         ],
