@@ -42,10 +42,17 @@ app.use((err, req, res, next) => {
     next(err);
 });
 
+// Swagger documentation routes
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
     persistAuthorization: true,
     customCss: '.swagger-ui .topbar { display: none }'
 }));
+
+// Serve Swagger JSON spec directly (useful for debugging)
+app.get('/api-docs.json', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swaggerSpec);
+});
 
 app.use('/', routes);
 

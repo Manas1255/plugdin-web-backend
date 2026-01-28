@@ -1,4 +1,5 @@
 const swaggerJSDoc = require('swagger-jsdoc');
+const path = require('path');
 
 const options = {
     definition: {
@@ -11,11 +12,11 @@ const options = {
         servers: [
             {
                 url: `http://localhost:${process.env.PORT || 3000}`,
-                description: 'Development server',
+                description: 'Local development server',
             },
             {
-                url: 'http://ec2-100-49-41-182.compute-1.amazonaws.com',
-                description: 'Development server',
+                url: process.env.API_URL || `http://ec2-3-214-48-224.compute-1.amazonaws.com:${process.env.PORT || 3000}`,
+                description: 'Production server',
             },
         ],
         components: {
@@ -29,9 +30,29 @@ const options = {
             },
         },
     },
-    apis: ['./docs/*.js', './routes/*.js', './controllers/*.js'], // paths to files containing OpenAPI definitions
+    apis: [
+        path.join(__dirname, '*.js'),
+        path.join(__dirname, '../routes/*.js'),
+        path.join(__dirname, '../controllers/*.js')
+    ], // paths to files containing OpenAPI definitions
 };
 
-const swaggerSpec = swaggerJSDoc(options);
+let swaggerSpec;
+try {
+    swaggerSpec = swaggerJSDoc(options);
+    console.log('Swagger spec generated successfully');
+} catch (error) {
+    console.error('Error generating Swagger spec:', error);
+    // Return a minimal spec if generation fails
+    swaggerSpec = {
+        openapi: '3.0.0',
+        info: {
+            title: 'Plugdin Web Backend API',
+            version: '1.0.0',
+            description: 'Error loading API documentation',
+        },
+        paths: {},
+    };
+}
 
 module.exports = swaggerSpec;
