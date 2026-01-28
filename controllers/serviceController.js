@@ -17,13 +17,36 @@ const createService = async (req, res) => {
 
         // Parse JSON fields that might be sent as strings in multipart/form-data
         // Multer parses form fields as strings, so we need to parse JSON fields
-        const jsonFields = ['availability', 'pricingOptions', 'servicingArea', 'packageSpecifications'];
+        const jsonFields = ['availability', 'pricingOptions'];
         jsonFields.forEach(field => {
             if (serviceData[field] && typeof serviceData[field] === 'string') {
                 try {
                     serviceData[field] = JSON.parse(serviceData[field]);
                 } catch (e) {
                     // If parsing fails, keep the original value
+                }
+            }
+        });
+
+        // Handle array fields that might be sent as comma-separated strings
+        const arrayFields = ['servicingArea', 'packageSpecifications'];
+        arrayFields.forEach(field => {
+            if (serviceData[field]) {
+                if (typeof serviceData[field] === 'string') {
+                    try {
+                        // Try to parse as JSON first
+                        serviceData[field] = JSON.parse(serviceData[field]);
+                    } catch (e) {
+                        // If JSON parsing fails, treat as comma-separated string
+                        serviceData[field] = serviceData[field]
+                            .split(',')
+                            .map(item => item.trim())
+                            .filter(item => item.length > 0);
+                    }
+                }
+                // Ensure it's an array
+                if (!Array.isArray(serviceData[field])) {
+                    serviceData[field] = [serviceData[field]];
                 }
             }
         });
