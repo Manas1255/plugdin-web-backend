@@ -1,5 +1,5 @@
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3');
-const { v4: uuidv4 } = require('uuid');
+const { randomUUID } = require('crypto');
 
 /**
  * S3 Client Singleton
@@ -48,7 +48,7 @@ const uploadToS3 = async (buffer, fileName, mimeType, folder) => {
         
         // Generate unique filename
         const extension = getExtensionFromMimeType(mimeType);
-        const uniqueFileName = `${uuidv4()}.${extension}`;
+        const uniqueFileName = `${randomUUID()}.${extension}`;
         
         // Construct S3 key (path)
         const key = folder ? `${folder}/${uniqueFileName}` : uniqueFileName;
