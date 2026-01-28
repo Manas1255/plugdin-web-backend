@@ -54,14 +54,14 @@ const uploadToS3 = async (buffer, fileName, mimeType, folder) => {
         const key = folder ? `${folder}/${uniqueFileName}` : uniqueFileName;
         
         // Upload to S3
-        // Note: ACL 'public-read' requires bucket ACLs to be enabled.
-        // If ACLs are disabled, use a bucket policy instead to allow public read access.
+        // Note: ACLs are not used here as the bucket may have ACLs disabled.
+        // For public access, ensure the bucket has a bucket policy that allows public read access.
         const command = new PutObjectCommand({
             Bucket: bucket,
             Key: key,
             Body: buffer,
-            ContentType: mimeType,
-            ACL: 'public-read' // Make object publicly readable (requires bucket ACLs enabled)
+            ContentType: mimeType
+            // ACL removed - bucket policy should handle public access if needed
         });
         
         await client.send(command);
