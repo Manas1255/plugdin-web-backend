@@ -27,6 +27,28 @@ const { uploadServiceImages, handleMulterError } = require('../middleware/upload
  *           enum: [hourly, fixed]
  *         description: Filter by listing type
  *       - in: query
+ *         name: minPrice
+ *         schema:
+ *           type: number
+ *         description: Minimum price filter (matches pricePerHour for hourly or pricePerSession for fixed)
+ *       - in: query
+ *         name: maxPrice
+ *         schema:
+ *           type: number
+ *         description: Maximum price filter (matches pricePerHour for hourly or pricePerSession for fixed)
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Filter by availability start date (ISO date)
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Filter by availability end date (ISO date)
+ *       - in: query
  *         name: page
  *         schema:
  *           type: integer
