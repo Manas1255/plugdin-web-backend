@@ -124,6 +124,37 @@
  *               type: number
  *               example: 0
  * 
+ *     TimeSlot:
+ *       type: object
+ *       description: A time slot within a day's schedule
+ *       properties:
+ *         startTime:
+ *           type: string
+ *           description: Start time in HH:MM format (24-hour)
+ *           example: "09:00"
+ *         endTime:
+ *           type: string
+ *           description: End time in HH:MM format (24-hour)
+ *           example: "17:00"
+ * 
+ *     DailySchedule:
+ *       type: object
+ *       description: Availability for a single day of the week
+ *       properties:
+ *         dayOfWeek:
+ *           type: string
+ *           enum: [sunday, monday, tuesday, wednesday, thursday, friday, saturday]
+ *           description: Day of the week
+ *         isAvailable:
+ *           type: boolean
+ *           description: Whether the vendor is available on this day
+ *           default: false
+ *         timeSlots:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/TimeSlot'
+ *           description: Time slots when the vendor is available
+ * 
  *     CreateServiceRequest:
  *       type: object
  *       description: |
