@@ -165,6 +165,28 @@ const createBookingRequest = async (clientId, bookingData) => {
         );
         
         if (hasConflict) {
+            // If the conflict is this client's own payment_pending booking (e.g. double-submit),
+            // return that existing booking so checkout can proceed instead of 409
+            const existingPaymentPending = await bookingRequestRepository.findPaymentPendingByClientServiceAndSlot(
+                clientId,
+                serviceId,
+                bookingStart,
+                bookingEnd
+            );
+            if (existingPaymentPending) {
+                const setupIntent = await stripeClient.retrieveSetupIntent(existingPaymentPending.stripeSetupIntentId);
+                return {
+                    success: true,
+                    statusCode: 200,
+                    data: {
+                        bookingRequestId: existingPaymentPending._id,
+                        stripe: {
+                            clientSecret: setupIntent.client_secret
+                        },
+                        pricing: existingPaymentPending.pricingSnapshot
+                    }
+                };
+            }
             return {
                 success: false,
                 statusCode: 409,

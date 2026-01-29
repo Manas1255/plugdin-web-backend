@@ -86,6 +86,27 @@ const updateById = async (bookingRequestId, updateData) => {
 };
 
 /**
+ * Find existing payment_pending booking for same client, service, and overlapping time.
+ * Used to support idempotent create (e.g. double-submit returns existing booking).
+ */
+const findPaymentPendingByClientServiceAndSlot = async (clientId, serviceId, bookingStart, bookingEnd) => {
+    const query = {
+        clientId,
+        serviceId,
+        status: 'payment_pending',
+        $or: [
+            { bookingStart: { $lte: bookingStart }, bookingEnd: { $gt: bookingStart } },
+            { bookingStart: { $lt: bookingEnd }, bookingEnd: { $gte: bookingEnd } },
+            { bookingStart: { $gte: bookingStart }, bookingEnd: { $lte: bookingEnd } }
+        ]
+    };
+    return await BookingRequest.findOne(query)
+        .populate('serviceId', 'listingTitle listingType pricePerHour pricingOptions availability')
+        .populate('vendorId', 'firstName lastName email profilePicture')
+        .populate('clientId', 'firstName lastName email profilePicture');
+};
+
+/**
  * Check for booking conflicts (overlapping bookings for the same service)
  * Returns true if there's a conflict, false otherwise
  */
@@ -149,6 +170,7 @@ module.exports = {
     findByClientId,
     findByVendorId,
     updateById,
+    findPaymentPendingByClientServiceAndSlot,
     hasBookingConflict,
     findAll,
     count
