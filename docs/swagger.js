@@ -15,7 +15,7 @@ const options = {
                 description: 'Local development server',
             },
             {
-                url: 'http://ec2-3-214-48-224.compute-1.amazonaws.com',
+                url: 'http://ec2-3-214-48-224.compute-1.amazonaws.com:3000',
                 description: 'Production server',
             },
         ],

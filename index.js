@@ -42,11 +42,24 @@ app.use((err, req, res, next) => {
     next(err);
 });
 
-// Swagger documentation routes
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
-    persistAuthorization: true,
-    customCss: '.swagger-ui .topbar { display: none }'
-}));
+// Swagger documentation routes - use current request host so "Try it out" hits the same server
+app.use('/api-docs', swaggerUi.serve, (req, res, next) => {
+    const host = req.get('host') || `localhost:${process.env.PORT || 3000}`;
+    const protocol = req.get('x-forwarded-proto') || req.protocol || 'http';
+    const baseUrl = `${protocol}://${host}`;
+    const dynamicSpec = {
+        ...swaggerSpec,
+        servers: [
+            { url: baseUrl, description: 'Current server (same as this page)' },
+            { url: `http://localhost:${process.env.PORT || 3000}`, description: 'Local development server' },
+            { url: 'http://ec2-3-214-48-224.compute-1.amazonaws.com:3000', description: 'Production server' },
+        ],
+    };
+    swaggerUi.setup(dynamicSpec, {
+        persistAuthorization: true,
+        customCss: '.swagger-ui .topbar { display: none }',
+    })(req, res, next);
+});
 
 // Serve Swagger JSON spec directly (useful for debugging)
 app.get('/api-docs.json', (req, res) => {
