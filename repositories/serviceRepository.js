@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Service = require('../models/Service');
 
 /**
@@ -12,6 +13,9 @@ const createService = async (serviceData) => {
  * Find service by ID
  */
 const findById = async (serviceId) => {
+    if (!serviceId || !mongoose.Types.ObjectId.isValid(serviceId)) {
+        return null;
+    }
     return await Service.findOne({ _id: serviceId, isDeleted: false })
         .populate('vendor', 'firstName lastName email profilePicture');
 };
@@ -178,6 +182,9 @@ const count = async (filters = {}) => {
  * Update service by ID
  */
 const updateById = async (serviceId, updateData) => {
+    if (!serviceId || !mongoose.Types.ObjectId.isValid(serviceId)) {
+        return null;
+    }
     return await Service.findOneAndUpdate(
         { _id: serviceId, isDeleted: false },
         updateData,
@@ -189,6 +196,9 @@ const updateById = async (serviceId, updateData) => {
  * Soft delete service by ID
  */
 const softDeleteById = async (serviceId) => {
+    if (!serviceId || !mongoose.Types.ObjectId.isValid(serviceId)) {
+        return null;
+    }
     return await Service.findOneAndUpdate(
         { _id: serviceId, isDeleted: false },
         { isDeleted: true, status: 'archived' },
@@ -206,7 +216,7 @@ const existsByTitleAndVendor = async (listingTitle, vendorId, excludeId = null) 
         isDeleted: false
     };
     
-    if (excludeId) {
+    if (excludeId && mongoose.Types.ObjectId.isValid(excludeId)) {
         query._id = { $ne: excludeId };
     }
     

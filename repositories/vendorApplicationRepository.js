@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const VendorApplication = require('../models/VendorApplication');
 
 const findByEmail = async (email) => {
@@ -10,15 +11,24 @@ const findByEmailWithToken = async (email) => {
 };
 
 const findById = async (applicationId) => {
+    if (!applicationId || !mongoose.Types.ObjectId.isValid(applicationId)) {
+        return null;
+    }
     return await VendorApplication.findById(applicationId);
 };
 
 const findByIdWithToken = async (applicationId) => {
+    if (!applicationId || !mongoose.Types.ObjectId.isValid(applicationId)) {
+        return null;
+    }
     return await VendorApplication.findById(applicationId)
         .select('+approvalToken +approvalTokenExpiry');
 };
 
 const findByIdWithPasswordHash = async (applicationId) => {
+    if (!applicationId || !mongoose.Types.ObjectId.isValid(applicationId)) {
+        return null;
+    }
     return await VendorApplication.findById(applicationId)
         .select('+passwordHash');
 };
@@ -29,6 +39,9 @@ const create = async (applicationData) => {
 };
 
 const updateById = async (applicationId, updateData) => {
+    if (!applicationId || !mongoose.Types.ObjectId.isValid(applicationId)) {
+        return null;
+    }
     return await VendorApplication.findByIdAndUpdate(
         applicationId,
         updateData,
@@ -63,6 +76,9 @@ const countByStatus = async (status) => {
 };
 
 const deleteById = async (applicationId) => {
+    if (!applicationId || !mongoose.Types.ObjectId.isValid(applicationId)) {
+        return null;
+    }
     return await VendorApplication.findByIdAndDelete(applicationId);
 };
 

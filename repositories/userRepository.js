@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const User = require('../models/User');
 
 const findByEmail = async (email) => {
@@ -10,6 +11,9 @@ const create = async (userData) => {
 };
 
 const findById = async (userId) => {
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+        return null;
+    }
     return await User.findById(userId);
 };
 
@@ -18,6 +22,9 @@ const findByEmailWithPassword = async (email) => {
 };
 
 const updateById = async (userId, updateData) => {
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+        return null;
+    }
     return await User.findByIdAndUpdate(
         userId,
         updateData,
@@ -26,6 +33,9 @@ const updateById = async (userId, updateData) => {
 };
 
 const deleteById = async (userId) => {
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+        return null;
+    }
     return await User.findByIdAndDelete(userId);
 };
 

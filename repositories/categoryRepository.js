@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Category = require('../models/Category');
 
 /**
@@ -36,6 +37,9 @@ const createCategory = async (categoryData) => {
  * Find category by ID
  */
 const findById = async (categoryId) => {
+    if (!categoryId || !mongoose.Types.ObjectId.isValid(categoryId)) {
+        return null;
+    }
     return await Category.findOne({ _id: categoryId, isActive: true });
 };
 

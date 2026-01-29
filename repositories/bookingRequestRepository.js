@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const BookingRequest = require('../models/BookingRequest');
 
 /**
@@ -12,6 +13,9 @@ const create = async (bookingData) => {
  * Find booking request by ID
  */
 const findById = async (bookingRequestId) => {
+    if (!bookingRequestId || !mongoose.Types.ObjectId.isValid(bookingRequestId)) {
+        return null;
+    }
     return await BookingRequest.findById(bookingRequestId)
         .populate('serviceId', 'listingTitle listingType pricePerHour pricingOptions availability')
         .populate('vendorId', 'firstName lastName email profilePicture')
@@ -22,6 +26,9 @@ const findById = async (bookingRequestId) => {
  * Find booking request by ID without population (for performance)
  */
 const findByIdLean = async (bookingRequestId) => {
+    if (!bookingRequestId || !mongoose.Types.ObjectId.isValid(bookingRequestId)) {
+        return null;
+    }
     return await BookingRequest.findById(bookingRequestId).lean();
 };
 
@@ -65,6 +72,9 @@ const findByVendorId = async (vendorId, filters = {}) => {
  * Update booking request by ID
  */
 const updateById = async (bookingRequestId, updateData) => {
+    if (!bookingRequestId || !mongoose.Types.ObjectId.isValid(bookingRequestId)) {
+        return null;
+    }
     return await BookingRequest.findByIdAndUpdate(
         bookingRequestId,
         updateData,
@@ -102,7 +112,7 @@ const hasBookingConflict = async (serviceId, bookingStart, bookingEnd, excludeBo
         ]
     };
 
-    if (excludeBookingId) {
+    if (excludeBookingId && mongoose.Types.ObjectId.isValid(excludeBookingId)) {
         query._id = { $ne: excludeBookingId };
     }
 
