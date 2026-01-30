@@ -9,7 +9,8 @@ function cleanIdsAndVersion(obj, seen = new WeakSet()) {
   if (Array.isArray(obj)) {
     return obj.map((item) => cleanIdsAndVersion(item, seen));
   } else if (obj && typeof obj === "object") {
-    if (obj.constructor && obj.constructor.name === "model") {
+    // Convert any Mongoose document (document or subdocument) to plain object
+    if (typeof obj.toObject === "function") {
       return cleanIdsAndVersion(obj.toObject(), seen);
     }
     if (
