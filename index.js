@@ -73,4 +73,6 @@ const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
+    const apiUrl = process.env.API_URL || process.env.APP_URL || `http://localhost:${PORT}`;
+    console.log(`Email links (approve/reject) use: ${apiUrl}`);
 });
