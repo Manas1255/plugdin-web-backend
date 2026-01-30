@@ -2,20 +2,21 @@ const express = require('express');
 const router = express.Router();
 const profileController = require('../controllers/profileController');
 const { authenticate } = require('../middleware/auth');
+const { uploadProfilePicture, handleMulterError } = require('../middleware/upload');
 
 /**
  * @swagger
  * /api/profile:
  *   put:
  *     summary: Update user profile
- *     description: Update the authenticated user's profile information (firstName, lastName, profilePicture, bio)
+ *     description: Update the authenticated user's profile information. Send as multipart/form-data. Use the "profilePicture" field to upload an image file (jpg, jpeg, png, webp; max 20MB). Other fields (firstName, lastName, bio) are optional text fields.
  *     tags: [Profile]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
  *       required: false
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
@@ -29,8 +30,8 @@ const { authenticate } = require('../middleware/auth');
  *                 example: Doe
  *               profilePicture:
  *                 type: string
- *                 nullable: true
- *                 example: https://example.com/profile.jpg
+ *                 format: binary
+ *                 description: Profile picture image file (jpg, jpeg, png, webp; max 20MB)
  *               bio:
  *                 type: string
  *                 maxLength: 500
@@ -107,7 +108,7 @@ const { authenticate } = require('../middleware/auth');
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.put('/', authenticate, profileController.updateProfile);
+router.put('/', authenticate, uploadProfilePicture, handleMulterError, profileController.updateProfile);
 
 /**
  * @swagger
@@ -151,5 +152,115 @@ router.put('/', authenticate, profileController.updateProfile);
  *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.delete('/', authenticate, profileController.deleteAccount);
+
+/**
+ * @swagger
+ * /api/profile/change-password:
+ *   post:
+ *     summary: Change user password
+ *     description: Change the authenticated user's password. Requires old password verification and a new password.
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - oldPassword
+ *               - newPassword
+ *             properties:
+ *               oldPassword:
+ *                 type: string
+ *                 format: password
+ *                 description: Current password
+ *                 example: OldPass123!
+ *               newPassword:
+ *                 type: string
+ *                 format: password
+ *                 minLength: 6
+ *                 description: New password (minimum 6 characters)
+ *                 example: NewPass456!
+ *     responses:
+ *       200:
+ *         description: Password changed successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/SuccessResponse'
+ *                 - type: object
+ *                   properties:
+ *                     data:
+ *                       type: object
+ *                       properties:
+ *                         message:
+ *                           type: string
+ *                           example: Password changed successfully
+ *       400:
+ *         description: Validation error or incorrect old password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *             examples:
+ *               oldPasswordRequired:
+ *                 summary: Old password required
+ *                 value:
+ *                   statusCode: 400
+ *                   data: null
+ *                   error:
+ *                     timestamp: "2024-01-01T00:00:00.000Z"
+ *                     message: "Old password is required"
+ *                     stacktrace: null
+ *               newPasswordRequired:
+ *                 summary: New password required
+ *                 value:
+ *                   statusCode: 400
+ *                   data: null
+ *                   error:
+ *                     timestamp: "2024-01-01T00:00:00.000Z"
+ *                     message: "New password is required"
+ *                     stacktrace: null
+ *               passwordTooShort:
+ *                 summary: Password too short
+ *                 value:
+ *                   statusCode: 400
+ *                   data: null
+ *                   error:
+ *                     timestamp: "2024-01-01T00:00:00.000Z"
+ *                     message: "Password must be at least 6 characters long"
+ *                     stacktrace: null
+ *               incorrectOldPassword:
+ *                 summary: Incorrect old password
+ *                 value:
+ *                   statusCode: 400
+ *                   data: null
+ *                   error:
+ *                     timestamp: "2024-01-01T00:00:00.000Z"
+ *                     message: "Old password is incorrect"
+ *                     stacktrace: null
+ *       401:
+ *         description: Unauthorized - Invalid or missing token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.post('/change-password', authenticate, profileController.changePassword);
 
 module.exports = router;

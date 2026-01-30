@@ -23,6 +23,12 @@ const errorMessages = {
   USER_INVALID_CREDENTIALS: 'Invalid email or password',
   USER_INACTIVE: 'User account is inactive',
   
+  // Password errors
+  OLD_PASSWORD_REQUIRED: 'Old password is required',
+  NEW_PASSWORD_REQUIRED: 'New password is required',
+  INCORRECT_OLD_PASSWORD: 'Old password is incorrect',
+  PASSWORD_CHANGE_SUCCESS: 'Password changed successfully',
+  
   // Validation errors
   VALIDATION_ERROR: 'Validation error',
   VALIDATION_REQUIRED: 'This field is required',
@@ -56,6 +62,8 @@ const errorMessages = {
   MAX_IMAGES_EXCEEDED: 'Maximum 10 images allowed',
   
   // Service errors
+  VENDOR_ID_REQUIRED: 'Vendor ID is required',
+  INVALID_VENDOR_ID: 'Invalid vendor ID',
   SERVICE_NOT_FOUND: 'Service not found',
   SERVICE_ALREADY_EXISTS: 'A service with this title already exists for your account',
   INVALID_CATEGORY: 'Invalid category selected',

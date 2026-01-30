@@ -472,6 +472,81 @@ router.get('/vendor/my-services', authenticate, authorize('vendor'), serviceCont
 
 /**
  * @swagger
+ * /api/services/vendor/services:
+ *   post:
+ *     summary: Get services by vendor ID
+ *     description: Retrieve all services for a vendor by their ID. Same response format as get vendor's own services. Request body must include vendorId.
+ *     tags: [Services]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - vendorId
+ *             properties:
+ *               vendorId:
+ *                 type: string
+ *                 description: Vendor user ID (MongoDB ObjectId)
+ *     parameters:
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [draft, active, inactive, archived]
+ *         description: Filter by status
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Results per page
+ *     responses:
+ *       200:
+ *         description: Services retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/SuccessResponse'
+ *                 - type: object
+ *                   properties:
+ *                     data:
+ *                       type: object
+ *                       properties:
+ *                         services:
+ *                           type: array
+ *                           items:
+ *                             $ref: '#/components/schemas/Service'
+ *                         pagination:
+ *                           type: object
+ *                           properties:
+ *                             total:
+ *                               type: integer
+ *                             page:
+ *                               type: integer
+ *                             limit:
+ *                               type: integer
+ *                             pages:
+ *                               type: integer
+ *       400:
+ *         description: Bad request (missing or invalid vendor ID)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.post('/vendor/services', serviceController.getServicesByVendorId);
+
+/**
+ * @swagger
  * /api/services/{serviceId}:
  *   put:
  *     summary: Update service
