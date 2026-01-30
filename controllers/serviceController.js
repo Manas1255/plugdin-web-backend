@@ -142,7 +142,7 @@ const getService = async (req, res) => {
 };
 
 /**
- * Get vendor's services
+ * Get vendor's services (authenticated vendor - own services)
  */
 const getVendorServices = async (req, res) => {
     try {
@@ -167,6 +167,50 @@ const getVendorServices = async (req, res) => {
 
     } catch (error) {
         console.error('Get vendor services controller error:', error);
+        return sendResponse(res, 500, null, {
+            message: getErrorMessage('INTERNAL_SERVER_ERROR', errorMessages)
+        });
+    }
+};
+
+/**
+ * Get services by vendor ID (vendor id in request body, same response format as getVendorServices)
+ */
+const getServicesByVendorId = async (req, res) => {
+    try {
+        const { vendorId } = req.body;
+        const { status } = req.query;
+        const { page, limit } = getPaginationParams(req);
+
+        if (!vendorId) {
+            return sendResponse(res, 400, null, {
+                message: getErrorMessage('VENDOR_ID_REQUIRED', errorMessages)
+            });
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(vendorId)) {
+            return sendResponse(res, 400, null, {
+                message: getErrorMessage('INVALID_VENDOR_ID', errorMessages)
+            });
+        }
+
+        const filters = {};
+        if (status) {
+            filters.status = status;
+        }
+
+        const result = await serviceService.getVendorServices(vendorId, filters, page, limit);
+
+        if (!result.success) {
+            return sendResponse(res, result.statusCode, null, {
+                message: getErrorMessage(result.errorKey, errorMessages)
+            });
+        }
+
+        return sendResponse(res, result.statusCode, result.data, null);
+
+    } catch (error) {
+        console.error('Get services by vendor ID controller error:', error);
         return sendResponse(res, 500, null, {
             message: getErrorMessage('INTERNAL_SERVER_ERROR', errorMessages)
         });
@@ -263,6 +307,7 @@ module.exports = {
     createService,
     getService,
     getVendorServices,
+    getServicesByVendorId,
     updateService,
     deleteService,
     searchServices

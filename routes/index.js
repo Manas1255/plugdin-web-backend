@@ -16,6 +16,9 @@ router.use('/api/auth', require('./auth'));
 // Profile routes
 router.use('/api/profile', require('./profile'));
 
+// Vendor routes
+router.use('/api/vendors', require('./vendor'));
+
 // Service routes (includes categories and cities)
 router.use('/api/services', require('./service'));
 

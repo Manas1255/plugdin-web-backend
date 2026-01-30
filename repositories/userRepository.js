@@ -39,11 +39,49 @@ const deleteById = async (userId) => {
     return await User.findByIdAndDelete(userId);
 };
 
+const findByIdWithPassword = async (userId) => {
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+        return null;
+    }
+    return await User.findById(userId).select('+password');
+};
+
+const findVendorsPaginated = async (limit = 10, skip = 0) => {
+    return await User.find({ role: 'vendor' })
+        .select('firstName lastName profilePicture')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean();
+};
+
+const countVendors = async () => {
+    return await User.countDocuments({ role: 'vendor' });
+};
+
+const updatePassword = async (userId, newPassword) => {
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+        return null;
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+        return null;
+    }
+    
+    // Update password and save (this will trigger the pre-save hook to hash the password)
+    user.password = newPassword;
+    return await user.save();
+};
+
 module.exports = {
     findByEmail,
     create,
     findById,
     findByEmailWithPassword,
     updateById,
-    deleteById
+    deleteById,
+    findByIdWithPassword,
+    updatePassword,
+    findVendorsPaginated,
+    countVendors
 };

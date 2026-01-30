@@ -46,6 +46,12 @@ const uploadServiceImages = multer(multerConfig).array('photos', 10);
 const uploadSingleImage = multer(multerConfig).single('image');
 
 /**
+ * Middleware for uploading profile picture (single file)
+ * Field name: "profilePicture"
+ */
+const uploadProfilePicture = multer(multerConfig).single('profilePicture');
+
+/**
  * Error handler for Multer errors
  */
 const handleMulterError = (err, req, res, next) => {
@@ -78,7 +84,7 @@ const handleMulterError = (err, req, res, next) => {
                 data: null,
                 error: {
                     timestamp: new Date().toISOString(),
-                    message: 'Unexpected file field. Use "photos" for multiple images or "image" for single image',
+                    message: 'Unexpected file field. Use "photos", "image", or "profilePicture" depending on the endpoint',
                     stacktrace: null
                 }
             });
@@ -104,5 +110,6 @@ const handleMulterError = (err, req, res, next) => {
 module.exports = {
     uploadServiceImages,
     uploadSingleImage,
+    uploadProfilePicture,
     handleMulterError
 };

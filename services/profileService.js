@@ -1,6 +1,7 @@
 const userRepository = require('../repositories/userRepository');
+const { uploadToS3 } = require('../utils/s3Client');
 
-const updateProfile = async (userId, { firstName, lastName, profilePicture, bio }) => {
+const updateProfile = async (userId, { firstName, lastName, profilePicture, profilePictureFile, bio }) => {
     // Build update object with only provided fields
     const updateData = {};
     
@@ -42,7 +43,16 @@ const updateProfile = async (userId, { firstName, lastName, profilePicture, bio 
         updateData.lastName = trimmedLastName;
     }
 
-    if (profilePicture !== undefined) {
+    if (profilePictureFile) {
+        const folder = `profiles/${userId}`;
+        const url = await uploadToS3(
+            profilePictureFile.buffer,
+            profilePictureFile.originalname || 'profile',
+            profilePictureFile.mimetype,
+            folder
+        );
+        updateData.profilePicture = url;
+    } else if (profilePicture !== undefined) {
         updateData.profilePicture = profilePicture ? profilePicture.trim() : null;
     }
 
@@ -135,7 +145,75 @@ const deleteAccount = async (userId) => {
     };
 };
 
+const changePassword = async (userId, { oldPassword, newPassword }) => {
+    // Validate required fields
+    if (!oldPassword || oldPassword.trim().length === 0) {
+        return {
+            success: false,
+            statusCode: 400,
+            errorKey: 'OLD_PASSWORD_REQUIRED'
+        };
+    }
+
+    if (!newPassword || newPassword.trim().length === 0) {
+        return {
+            success: false,
+            statusCode: 400,
+            errorKey: 'NEW_PASSWORD_REQUIRED'
+        };
+    }
+
+    // Validate new password length
+    if (newPassword.trim().length < 6) {
+        return {
+            success: false,
+            statusCode: 400,
+            errorKey: 'PASSWORD_TOO_SHORT'
+        };
+    }
+
+    // Get user with password
+    const user = await userRepository.findByIdWithPassword(userId);
+    
+    if (!user) {
+        return {
+            success: false,
+            statusCode: 404,
+            errorKey: 'USER_NOT_FOUND'
+        };
+    }
+
+    // Verify old password
+    const isPasswordValid = await user.comparePassword(oldPassword);
+    
+    if (!isPasswordValid) {
+        return {
+            success: false,
+            statusCode: 400,
+            errorKey: 'INCORRECT_OLD_PASSWORD'
+        };
+    }
+
+    // Update password
+    const updatedUser = await userRepository.updatePassword(userId, newPassword);
+    
+    if (!updatedUser) {
+        return {
+            success: false,
+            statusCode: 500,
+            errorKey: 'INTERNAL_SERVER_ERROR'
+        };
+    }
+
+    return {
+        success: true,
+        statusCode: 200,
+        data: { message: 'Password changed successfully' }
+    };
+};
+
 module.exports = {
     updateProfile,
-    deleteAccount
+    deleteAccount,
+    changePassword
 };
